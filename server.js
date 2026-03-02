@@ -178,6 +178,20 @@ app.get('/admin', requireAdminAuth, (req, res) => {
   });
 });
 
+// Ensure API misses never fall through to HTML/default responses.
+app.use('/api', (_req, res) => {
+  return res.status(404).json({ error: 'API route not found.' });
+});
+
+// Ensure API exceptions return JSON in production.
+app.use((err, req, res, next) => {
+  if (req.path.startsWith('/api/')) {
+    return res.status(500).json({ error: 'Internal server error.' });
+  }
+
+  return next(err);
+});
+
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });

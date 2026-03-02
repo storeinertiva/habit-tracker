@@ -102,15 +102,23 @@ confirmPaid.addEventListener('click', async () => {
 
   if (!currentBuyerId) {
     paymentError.textContent = 'Missing buyer info. Please restart the purchase.';
+    confirmPaid.disabled = false;
+    confirmPaid.textContent = 'I\'ve Paid';
     return;
   }
 
   try {
+    const buyerId = currentBuyerId;
     const response = await fetch('/api/confirm', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ buyerId: currentBuyerId })
+      body: JSON.stringify({ buyerId })
     });
+
+    const contentType = response.headers.get('content-type') || '';
+    if (!contentType.includes('application/json')) {
+      throw new Error('Server returned non-JSON response for payment confirmation.');
+    }
 
     const data = await response.json();
     if (!response.ok) throw new Error(data.error || 'Unable to confirm payment.');
