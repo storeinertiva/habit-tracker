@@ -10,9 +10,9 @@ const helmet = require('helmet');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const PRODUCT_PRICE = Number(process.env.PRODUCT_PRICE_PAISA || 200);
 
 app.use(helmet());
+app.use(express.json());
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -24,18 +24,26 @@ const razorpay = new Razorpay({
 
 app.post('/api/create-order', async (_req, res) => {
   try {
+    if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
+      return res.status(500).json({
+        error: 'Unable to create order',
+        details: 'Missing Razorpay environment variables'
+      });
+    }
+
     const order = await razorpay.orders.create({
-      amount: PRODUCT_PRICE,
+      amount: 200,
       currency: 'INR',
-      receipt: `order_${Date.now()}`
+      receipt: 'order_' + Date.now()
     });
 
-    return res.json({
-      ...order,
-      key: process.env.RAZORPAY_KEY_ID
-    });
+    return res.json({ ...order, key: process.env.RAZORPAY_KEY_ID });
   } catch (err) {
-    return res.status(500).json({ error: 'Unable to create order.' });
+    console.error('RAZORPAY ORDER ERROR:', err);
+    return res.status(500).json({
+      error: 'Unable to create order',
+      details: err.message
+    });
   }
 });
 
@@ -94,5 +102,5 @@ app.get('/api/health', (_req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log('Server running on port ' + PORT);
 });
