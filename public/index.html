@@ -20,7 +20,7 @@
         </div>
         <nav class="nav">
           <button class="nav-link" id="openPreviewNav" type="button">Preview</button>
-          <button class="ghost" id="openModalTop">Buy Now</button>
+          <button class="ghost" id="buyNowTop" type="button">Buy Now</button>
         </nav>
       </header>
 
@@ -41,7 +41,7 @@
                 <span class="price-off">26% off</span>
               </div>
             </div>
-            <button class="primary" id="openModal">Buy Now</button>
+            <button class="primary" id="buyNowMain" type="button">Buy Now</button>
           </div>
           <ul class="benefits">
             <li>Daily, weekly, and monthly tracking</li>
@@ -86,55 +86,6 @@
         <img src="assets/mockup.png" alt="Habit tracker preview large" />
       </div>
     </div>
-
-    <div class="modal" id="purchaseModal" aria-hidden="true">
-      <div class="modal-backdrop" data-close="true"></div>
-      <div class="modal-card" role="dialog" aria-modal="true">
-        <button class="close" id="closeModal" aria-label="Close">×</button>
-
-        <div class="modal-step" id="stepForm">
-          <h2>Buyer details</h2>
-          <p class="muted">We’ll email your download after payment confirmation.</p>
-
-          <form id="buyerForm">
-            <label>
-              Full name
-              <input type="text" name="fullName" required placeholder="Jane Doe" />
-            </label>
-            <label>
-              Email address
-              <input type="email" name="email" required placeholder="jane@email.com" />
-            </label>
-            <button type="submit" class="primary">Continue to payment</button>
-            <p class="form-error" id="formError"></p>
-          </form>
-        </div>
-
-        <div class="modal-step hidden" id="stepPayment">
-          <h2>Payment</h2>
-          <p class="muted">Scan the QR code to pay ₹54. This is a manual confirmation flow.</p>
-          <div class="qr-wrap">
-            <img src="assets/qr-placeholder.png" alt="QR payment" />
-          </div>
-          <ol class="instructions">
-            <li>Scan the QR code with your payment app.</li>
-            <li>Complete the transfer.</li>
-            <li>Click “I’ve Paid” to receive your download.</li>
-          </ol>
-          <button class="primary" id="confirmPaid">I’ve Paid</button>
-          <p class="small" id="paymentStatus"></p>
-          <p class="form-error" id="paymentError"></p>
-        </div>
-
-        <div class="modal-step hidden" id="stepSuccess">
-          <h2>Success!</h2>
-          <p class="muted">Thanks for your purchase. Your download is ready below.</p>
-          <a class="primary" id="downloadLink" href="#" download>Download Excel File</a>
-          <p class="small">A copy was also sent to your email.</p>
-        </div>
-      </div>
-    </div>
-
     <script src="app.js"></script>
   </body>
 </html>

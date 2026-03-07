@@ -18,6 +18,20 @@ CREATE TABLE IF NOT EXISTS buyers (
 
 db.serialize(() => {
   db.run(initSql);
+  db.all('PRAGMA table_info(buyers)', [], (pragmaErr, columns) => {
+    if (pragmaErr) return;
+
+    const existing = new Set(columns.map((col) => col.name));
+    const addColumn = (name, sqlType) => {
+      if (!existing.has(name)) {
+        db.run(`ALTER TABLE buyers ADD COLUMN ${name} ${sqlType}`);
+      }
+    };
+
+    addColumn('payment_order_id', 'TEXT');
+    addColumn('payment_id', 'TEXT');
+    addColumn('payment_signature', 'TEXT');
+  });
 });
 
 module.exports = db;

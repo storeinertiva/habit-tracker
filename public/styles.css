@@ -53,6 +53,23 @@ body.loaded {
   height: 176px;
   width: auto;
 }
+
+.download-wrap {
+  min-height: 55vh;
+  display: grid;
+  place-items: center;
+}
+
+.download-card {
+  width: min(640px, 100%);
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 36px 28px;
+  display: grid;
+  gap: 14px;
+  text-align: center;
+}
 .nav {
   display: flex;
   align-items: center;
