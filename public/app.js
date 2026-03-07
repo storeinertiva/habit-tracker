@@ -11,6 +11,16 @@ const closePreview = document.getElementById('closePreview');
 const previewBackdrop = document.querySelector('.lightbox-backdrop');
 
 const downloadSection = document.getElementById('downloadSection');
+let razorpayKeyId = '';
+
+fetch('/api/product')
+  .then((res) => res.json())
+  .then((data) => {
+    const priceEl = document.getElementById('price');
+    if (priceEl) priceEl.innerText = '₹' + data.price;
+    razorpayKeyId = data.key || '';
+  })
+  .catch(() => {});
 
 function openModal() {
   modal.classList.remove('hidden');
@@ -53,7 +63,7 @@ payNowBtn.onclick = async () => {
   }
 
   const options = {
-    key: order.key,
+    key: razorpayKeyId,
     amount: order.amount,
     currency: 'INR',
     name: 'Inertiva',
