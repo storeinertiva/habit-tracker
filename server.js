@@ -33,7 +33,7 @@ app.post('/api/create-order', async (_req, res) => {
 
     return res.json(order);
   } catch (err) {
-    console.error('RAZORPAY ERROR:', err);
+    console.error('RAZORPAY ORDER ERROR:', err);
     return res.status(500).json({
       error: 'Unable to create order'
     });
@@ -102,5 +102,5 @@ app.get('/api/health', (_req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log('Server running on port ' + PORT);
+  console.log('Server running on port', PORT);
 });
