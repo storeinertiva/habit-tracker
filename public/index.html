@@ -10,6 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
     />
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
@@ -20,7 +21,7 @@
         </div>
         <nav class="nav">
           <button class="nav-link" id="openPreviewNav" type="button">Preview</button>
-          <button class="ghost" id="buyNowTop" type="button">Buy Now</button>
+          <button class="ghost" onclick="startPayment()" type="button">Buy Now</button>
         </nav>
       </header>
 
@@ -41,7 +42,11 @@
                 <span class="price-off">26% off</span>
               </div>
             </div>
-            <button class="primary" id="buyNowMain" type="button">Buy Now</button>
+            <button class="primary" onclick="startPayment()" type="button">Buy Now</button>
+          </div>
+          <div class="buyer-fields">
+            <input type="text" id="name" placeholder="Your Name" required />
+            <input type="email" id="email" placeholder="Your Email" required />
           </div>
           <ul class="benefits">
             <li>Daily, weekly, and monthly tracking</li>
@@ -86,6 +91,64 @@
         <img src="assets/mockup.png" alt="Habit tracker preview large" />
       </div>
     </div>
+    <script>
+      async function startPayment() {
+        const name = document.getElementById('name').value.trim();
+        const email = document.getElementById('email').value.trim();
+
+        if (!name || !email) {
+          alert('Please enter your name and email before payment.');
+          return;
+        }
+
+        const res = await fetch('/api/create-order', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email })
+        });
+
+        const order = await res.json();
+        if (!res.ok) {
+          alert(order.error || 'Unable to create payment order.');
+          return;
+        }
+
+        const options = {
+          key: order.key,
+          amount: order.amount,
+          currency: order.currency,
+          name: 'Inertiva',
+          description: 'Excel Habit Tracker',
+          order_id: order.id,
+          prefill: {
+            name,
+            email
+          },
+          handler: async function (response) {
+            const verify = await fetch('/api/verify-payment', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                ...response,
+                name,
+                email
+              })
+            });
+
+            const result = await verify.json();
+            if (!verify.ok || !result.success) {
+              alert(result.error || 'Payment verification failed.');
+              return;
+            }
+
+            window.location.href = '/download.html';
+          }
+        };
+
+        const rzp = new Razorpay(options);
+        rzp.open();
+      }
+    </script>
     <script src="app.js"></script>
   </body>
 </html>

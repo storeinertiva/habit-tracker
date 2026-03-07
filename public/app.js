@@ -1,20 +1,8 @@
-const PAYMENT_LINK = 'https://rzp.io/rzp/YYMKYJ9';
-
-const buyNowMain = document.getElementById('buyNowMain');
-const buyNowTop = document.getElementById('buyNowTop');
-
 const previewButton = document.getElementById('openPreview');
 const previewNavButton = document.getElementById('openPreviewNav');
 const previewLightbox = document.getElementById('previewLightbox');
 const closePreview = document.getElementById('closePreview');
 const previewBackdrop = document.querySelector('.lightbox-backdrop');
-
-function startPayment() {
-  window.location.href = PAYMENT_LINK;
-}
-
-if (buyNowMain) buyNowMain.addEventListener('click', startPayment);
-if (buyNowTop) buyNowTop.addEventListener('click', startPayment);
 
 function openPreview() {
   previewLightbox.classList.add('open');
