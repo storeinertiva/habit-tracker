@@ -11,7 +11,10 @@ const helmet = require('helmet');
 const app = express();
 const PORT = process.env.PORT || 3000;
 const PRODUCT_PRICE = 200; // ₹2 test price
-
+const razorpay = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_KEY_SECRET
+});
 app.use(helmet());
 app.use(express.json());
 app.use(bodyParser.json());
