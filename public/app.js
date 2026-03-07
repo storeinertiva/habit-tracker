@@ -11,14 +11,12 @@ const closePreview = document.getElementById('closePreview');
 const previewBackdrop = document.querySelector('.lightbox-backdrop');
 
 const downloadSection = document.getElementById('downloadSection');
-let razorpayKeyId = '';
 
 fetch('/api/product')
   .then((res) => res.json())
   .then((data) => {
     const priceEl = document.getElementById('price');
     if (priceEl) priceEl.innerText = '₹' + data.price;
-    razorpayKeyId = data.key || '';
   })
   .catch(() => {});
 
@@ -41,7 +39,28 @@ if (modalBackdrop) {
   modalBackdrop.onclick = closeModal;
 }
 
-payNowBtn.onclick = async () => {
+function verifyPayment(response, name, email) {
+  return fetch('/api/verify-payment', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      ...response,
+      name,
+      email
+    })
+  })
+    .then((verifyRes) => verifyRes.json().then((verifyData) => ({ ok: verifyRes.ok, verifyData })))
+    .then(({ ok, verifyData }) => {
+      if (!ok || !verifyData.success) {
+        throw new Error(verifyData.error || 'Payment verification failed.');
+      }
+
+      localStorage.setItem('purchaseSuccess', '1');
+      window.location.href = '/';
+    });
+}
+
+payNowBtn.onclick = () => {
   const name = document.getElementById('name').value.trim();
   const email = document.getElementById('email').value.trim();
 
@@ -50,53 +69,41 @@ payNowBtn.onclick = async () => {
     return;
   }
 
-  const res = await fetch('/api/create-order', {
+  fetch('/api/create-order', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ name, email })
-  });
-
-  const order = await res.json();
-  if (!res.ok) {
-    alert(order.error || 'Unable to create order.');
-    return;
-  }
-
-  const options = {
-    key: razorpayKeyId,
-    amount: order.amount,
-    currency: 'INR',
-    name: 'Inertiva',
-    description: 'Excel Habit Tracker',
-    order_id: order.id,
-    handler: async function (response) {
-      const verifyRes = await fetch('/api/verify-payment', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...response,
-          name,
-          email
-        })
-      });
-
-      const verifyData = await verifyRes.json();
-      if (!verifyRes.ok || !verifyData.success) {
-        alert(verifyData.error || 'Payment verification failed.');
-        return;
+  })
+    .then((res) => res.json().then((order) => ({ ok: res.ok, order })))
+    .then(({ ok, order }) => {
+      if (!ok) {
+        throw new Error(order.error || 'Unable to create order');
       }
 
-      localStorage.setItem('purchaseSuccess', '1');
-      window.location.href = '/';
-    },
-    prefill: {
-      name,
-      email
-    }
-  };
+      const options = {
+        key: order.key_id,
+        amount: order.amount,
+        currency: 'INR',
+        name: 'Inertiva',
+        description: 'Excel Habit Tracker',
+        order_id: order.id,
+        handler: function (response) {
+          verifyPayment(response, name, email).catch((err) => {
+            alert(err.message || 'Payment verification failed.');
+          });
+        },
+        prefill: {
+          name,
+          email
+        }
+      };
 
-  const rzp = new Razorpay(options);
-  rzp.open();
+      const rzp = new Razorpay(options);
+      rzp.open();
+    })
+    .catch(() => {
+      alert('Unable to create order');
+    });
 };
 
 function openPreview() {
