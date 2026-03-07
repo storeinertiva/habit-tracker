@@ -10,6 +10,7 @@ const helmet = require('helmet');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const PRODUCT_PRICE = Number(process.env.PRODUCT_PRICE_PAISA || 200);
 
 app.use(helmet());
 app.use(bodyParser.json());
@@ -24,7 +25,7 @@ const razorpay = new Razorpay({
 app.post('/api/create-order', async (_req, res) => {
   try {
     const order = await razorpay.orders.create({
-      amount: 5400,
+      amount: PRODUCT_PRICE,
       currency: 'INR',
       receipt: `order_${Date.now()}`
     });

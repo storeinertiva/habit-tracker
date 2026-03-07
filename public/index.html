@@ -21,7 +21,7 @@
         </div>
         <nav class="nav">
           <button class="nav-link" id="openPreviewNav" type="button">Preview</button>
-          <button class="ghost" onclick="startPayment()" type="button">Buy Now</button>
+          <button class="ghost" id="buyBtnTop" type="button">Buy Now</button>
         </nav>
       </header>
 
@@ -42,17 +42,17 @@
                 <span class="price-off">26% off</span>
               </div>
             </div>
-            <button class="primary" onclick="startPayment()" type="button">Buy Now</button>
-          </div>
-          <div class="buyer-fields">
-            <input type="text" id="name" placeholder="Your Name" required />
-            <input type="email" id="email" placeholder="Your Email" required />
+            <button class="primary" id="buyBtn" type="button">Buy Now</button>
           </div>
           <ul class="benefits">
             <li>Daily, weekly, and monthly tracking</li>
             <li>Automatic streaks and progress summaries</li>
             <li>Clean layout ready for print or tablet</li>
           </ul>
+          <div id="downloadSection" class="download-inline hidden">
+            <h3>Your purchase is successful</h3>
+            <a class="primary" href="/uploads/habit-tracker.xlsx" download>Download Habit Tracker</a>
+          </div>
         </section>
 
         <section class="hero-visual" id="preview">
@@ -91,64 +91,15 @@
         <img src="assets/mockup.png" alt="Habit tracker preview large" />
       </div>
     </div>
-    <script>
-      async function startPayment() {
-        const name = document.getElementById('name').value.trim();
-        const email = document.getElementById('email').value.trim();
-
-        if (!name || !email) {
-          alert('Please enter your name and email before payment.');
-          return;
-        }
-
-        const res = await fetch('/api/create-order', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, email })
-        });
-
-        const order = await res.json();
-        if (!res.ok) {
-          alert(order.error || 'Unable to create payment order.');
-          return;
-        }
-
-        const options = {
-          key: order.key,
-          amount: order.amount,
-          currency: order.currency,
-          name: 'Inertiva',
-          description: 'Excel Habit Tracker',
-          order_id: order.id,
-          prefill: {
-            name,
-            email
-          },
-          handler: async function (response) {
-            const verify = await fetch('/api/verify-payment', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                ...response,
-                name,
-                email
-              })
-            });
-
-            const result = await verify.json();
-            if (!verify.ok || !result.success) {
-              alert(result.error || 'Payment verification failed.');
-              return;
-            }
-
-            window.location.href = '/download.html';
-          }
-        };
-
-        const rzp = new Razorpay(options);
-        rzp.open();
-      }
-    </script>
+    <div id="paymentModal" class="modal hidden">
+      <div class="modal-backdrop" data-close="true"></div>
+      <div class="modal-card modal-content">
+        <h2>Enter Details</h2>
+        <input type="text" id="name" placeholder="Your Name" required />
+        <input type="email" id="email" placeholder="Your Email" required />
+        <button id="payNowBtn" class="primary" type="button">Proceed to Payment</button>
+      </div>
+    </div>
     <script src="app.js"></script>
   </body>
 </html>

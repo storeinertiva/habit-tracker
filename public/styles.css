@@ -180,6 +180,10 @@ body.loaded {
   margin-bottom: 18px;
 }
 
+.hidden {
+  display: none !important;
+}
+
 .preview-card {
   background: var(--card);
   padding: 24px;
@@ -308,6 +312,11 @@ button,
   transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
+.modal-content {
+  display: grid;
+  gap: 12px;
+}
+
 .modal.open .modal-card {
   transform: translateY(0);
   opacity: 1;
@@ -431,6 +440,12 @@ input:focus {
   color: var(--muted);
   display: grid;
   gap: 8px;
+}
+
+.download-inline {
+  margin-top: 24px;
+  display: grid;
+  gap: 12px;
 }
 
 .small {
