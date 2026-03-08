@@ -10,7 +10,6 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
@@ -38,7 +37,7 @@
               <span class="price-label">One-time purchase</span>
               <div class="price-stack">
                 <span class="price-old">₹73</span>
-                <span class="price-new" id="price"></span>
+                <span class="price-new">₹54</span>
                 <span class="price-off">26% off</span>
               </div>
             </div>
@@ -97,9 +96,10 @@
         <h2>Enter Details</h2>
         <input type="text" id="name" placeholder="Your Name" required />
         <input type="email" id="email" placeholder="Your Email" required />
-        <button id="payNowBtn" class="primary" type="button">Proceed to Payment</button>
+        <button id="payBtn" class="primary" type="button">Proceed to Payment</button>
       </div>
     </div>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script src="app.js"></script>
   </body>
 </html>

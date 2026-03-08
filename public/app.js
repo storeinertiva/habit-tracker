@@ -1,7 +1,7 @@
 const modal = document.getElementById('paymentModal');
 const buyBtn = document.getElementById('buyBtn');
 const buyBtnTop = document.getElementById('buyBtnTop');
-const payNowBtn = document.getElementById('payNowBtn');
+const payBtn = document.getElementById('payBtn');
 const modalBackdrop = document.querySelector('#paymentModal .modal-backdrop');
 
 const previewButton = document.getElementById('openPreview');
@@ -11,14 +11,6 @@ const closePreview = document.getElementById('closePreview');
 const previewBackdrop = document.querySelector('.lightbox-backdrop');
 
 const downloadSection = document.getElementById('downloadSection');
-
-fetch('/api/product')
-  .then((res) => res.json())
-  .then((data) => {
-    const priceEl = document.getElementById('price');
-    if (priceEl) priceEl.innerText = '₹' + data.price;
-  })
-  .catch(() => {});
 
 function openModal() {
   modal.classList.remove('hidden');
@@ -60,7 +52,7 @@ function verifyPayment(response, name, email) {
     });
 }
 
-payNowBtn.onclick = () => {
+payBtn.onclick = () => {
   const name = document.getElementById('name').value.trim();
   const email = document.getElementById('email').value.trim();
 
@@ -77,16 +69,16 @@ payNowBtn.onclick = () => {
     .then((res) => res.json().then((order) => ({ ok: res.ok, order })))
     .then(({ ok, order }) => {
       if (!ok) {
-        throw new Error(order.error || 'Unable to create order');
+        throw new Error(order.message || order.error || 'Unable to create order');
       }
 
       const options = {
-        key: order.key_id,
-        amount: order.amount,
+        key: 'YOUR_RAZORPAY_KEY_ID',
+        amount: order.order.amount,
         currency: 'INR',
         name: 'Inertiva',
         description: 'Excel Habit Tracker',
-        order_id: order.id,
+        order_id: order.order.id,
         handler: function (response) {
           verifyPayment(response, name, email).catch((err) => {
             alert(err.message || 'Payment verification failed.');

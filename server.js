@@ -2,6 +2,7 @@ require('dotenv').config();
 
 const path = require('path');
 const express = require('express');
+const cors = require('cors');
 const Razorpay = require('razorpay');
 const crypto = require('crypto');
 const bodyParser = require('body-parser');
@@ -20,6 +21,7 @@ const razorpay = new Razorpay({
 
 app.use(helmet());
 app.use(express.json());
+app.use(cors());
 app.use(bodyParser.json());
 
 app.use(express.static(path.join(__dirname, 'public')));
@@ -30,26 +32,21 @@ CREATE ORDER
 */
 app.post('/api/create-order', async (req, res) => {
   try {
-
     const order = await razorpay.orders.create({
-      amount: PRODUCT_PRICE,
+      amount: 5400,
       currency: 'INR',
-      receipt: 'order_' + Date.now()
+      receipt: 'receipt_order_1'
     });
 
-    res.json({
-      id: order.id,
-      amount: order.amount,
-      currency: order.currency,
-      key: process.env.RAZORPAY_KEY_ID
+    return res.json({
+      success: true,
+      order
     });
-
   } catch (err) {
-
-    console.error('RAZORPAY ERROR:', err);
-
-    res.status(500).json({
-      error: 'Unable to create order'
+    console.error(err);
+    return res.status(500).json({
+      success: false,
+      message: 'Unable to create order'
     });
   }
 });
