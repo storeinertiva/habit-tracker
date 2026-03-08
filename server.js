@@ -33,7 +33,7 @@ CREATE ORDER
 app.post('/api/create-order', async (req, res) => {
   try {
     const options = {
-      amount: 5400,
+      amount: 200,
       currency: 'INR',
       receipt: 'receipt_order_1'
     };
@@ -48,7 +48,7 @@ app.post('/api/create-order', async (req, res) => {
     console.error('RAZORPAY ORDER ERROR:', error);
     return res.status(500).json({
       success: false,
-      error: error.message
+      message: error.message
     });
   }
 });
