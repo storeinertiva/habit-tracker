@@ -73,7 +73,7 @@ payBtn.onclick = () => {
       }
 
       const options = {
-        key: 'YOUR_RAZORPAY_KEY_ID',
+        key: 'rzp_test_SOT8eLw9O0IGiq',
         amount: order.order.amount,
         currency: 'INR',
         name: 'Inertiva',
