@@ -11,9 +11,9 @@ const helmet = require('helmet');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const PRODUCT_PRICE = 200; // ₹2 test price
 
-// Razorpay initialization (ONLY ONCE)
+console.log('RAZORPAY KEY:', process.env.RAZORPAY_KEY_ID);
+
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
   key_secret: process.env.RAZORPAY_KEY_SECRET
@@ -32,21 +32,23 @@ CREATE ORDER
 */
 app.post('/api/create-order', async (req, res) => {
   try {
-    const order = await razorpay.orders.create({
+    const options = {
       amount: 5400,
       currency: 'INR',
       receipt: 'receipt_order_1'
-    });
+    };
+
+    const order = await razorpay.orders.create(options);
 
     return res.json({
       success: true,
       order
     });
-  } catch (err) {
-    console.error(err);
+  } catch (error) {
+    console.error('RAZORPAY ORDER ERROR:', error);
     return res.status(500).json({
       success: false,
-      message: 'Unable to create order'
+      error: error.message
     });
   }
 });
